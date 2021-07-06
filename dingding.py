@@ -2,22 +2,20 @@
 import requests
 import json
 import csv
-from netValue import *
 
 url = f'''https://oapi.dingtalk.com/robot/send?access_token=6150bdd7b72bca8ca2c6f43dd1d128e537da0980288a3c94b4d3cb78147f5972'''
 alert_profit = 1000
 access_token= f'''6150bdd7b72bca8ca2c6f43dd1d128e537da0980288a3c94b4d3cb78147f5972'''
 
 def send_dingding(access_token, address, amount, is_at=False):
-    # access_token = "xx" # access_token 【每个群的每个机器人都不一样】
-    url = f"""https://oapi.dingtalk.com/robot/send?access_token={access_token }"""
-    # 构建请求头部
+    url = f"""https://oapi.dingtalk.com/robot/send?access_token={access_token}"""
+    # define request header
     header = {
         "Content-Type": "application/json",
         "Charset": "UTF-8"
     }
 
-    alert_text = "Unusal activity: account address at "
+    alert_text = "Unusual activity: account address at "
     msg = {
      "msgtype": "markdown",
      "markdown": {
@@ -32,7 +30,7 @@ def send_dingding(access_token, address, amount, is_at=False):
             ],
             "isAtAll": False
         }
-    # 对请求的数据进行json封装
+    # convert requested message to json structure
     message_json = json.dumps(msg)
     try:
         res = requests.post(url=url, data=message_json, headers=header).json()
@@ -43,9 +41,8 @@ def send_dingding(access_token, address, amount, is_at=False):
     else:
         print("发送钉钉成功!")
 
-
-if __name__ == "__main__":
-    file = open("test-state.json")
+def alert():
+    file = open("trade_history.json")
     trades = json.load(file)
     trades = trades["blocks"]
     getNetValues(trades)
@@ -55,6 +52,10 @@ if __name__ == "__main__":
             send_dingding(access_token, account, netValues[account][5], is_at=False)
         else:
             continue
+
+if __name__ == "__main__":
+    alert()
+    
 
 
 
